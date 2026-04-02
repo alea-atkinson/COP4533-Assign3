@@ -3,7 +3,6 @@
 #include <fstream>
 #include <map>
 #include <sstream>
-#include <vector>
 #include "sequence.h"
 
 
@@ -80,12 +79,11 @@ int compute(){
 
 }
 
-int getMaxSequenceValue(std::string A, std::string B, std::map<char, int> alphabet)
+int getMaxSequenceValue(std::string A, std::string B, std::vector<std::vector<int>> &M, std::map<char, int> alphabet)
 {
     int maxValue = 0;
 
     // Initialize the solution vector M to 0
-    std::vector<std::vector<int>> M;
     for(int i = 0; i < A.length(); i++)
     {
         for(int j = 0; j < B.length(); j++)
@@ -103,7 +101,7 @@ int getMaxSequenceValue(std::string A, std::string B, std::map<char, int> alphab
         {
             if(A.at(i) == B.at(j))
             {
-                M[i][j] = alphabet[A[i-1]] + M[i-1][j-1];
+                M[i][j] = alphabet[A[i]] + M[i-1][j-1];
             }
 
             M[i][j] = std::max(M[i][j-1], M[i-1][j]); //ADD M[i-1][j] INTO CONSIDERATION FOR MAX
@@ -118,9 +116,25 @@ int getMaxSequenceValue(std::string A, std::string B, std::map<char, int> alphab
     return maxValue;
 }
 
-std::string getCommonSubsequence()
+std::string getCommonSubsequence(std::string A, std::string B, std::vector<std::vector<int>> &M, int i, int j)
 {
-    
+    // Backtracking
+    if (i == 0 || j == 0)
+    {
+        return "";
+    }
+    else if(A.at(i) == B.at(j))
+    {
+        return getCommonSubsequence(A, B, M, i - 1, j - 1) + A[i - 1];
+    }
+    else if(M[i - 1][j] > M[i][j - 1])
+    {
+        return getCommonSubsequence(A, B, M, i - 1, j);
+    }
+    else if(M[i][j - 1] >= M[i - 1][j])
+    {
+        return getCommonSubsequence(A, B, M, i, j - 1);
+    }
 }
 
 void genOutput(){
