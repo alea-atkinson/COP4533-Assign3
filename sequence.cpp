@@ -106,7 +106,7 @@ int getMaxSequenceValue(std::string A, std::string B, std::map<char, int> alphab
                 int value = alphabet[j];
             }
 
-            M[i][j] = std::max(value + M[i - 1][j - 1], M[i][j-1]);
+            M[i][j] = std::max(value + M[i - 1][j - 1], M[i][j-1]); //ADD M[i-1][j] INTO CONSIDERATION FOR MAX
             maxValue = M[i][j];
         }
     }
