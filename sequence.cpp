@@ -95,23 +95,32 @@ int getMaxSequenceValue(std::string A, std::string B, std::map<char, int> alphab
     }
 
     // Calculate the values 
-    for(int i = 0; i < A.length(); i++)
+    for(int i = 1; i < A.length(); i++)
     {
         int value = 0;
 
-        for(int j = 0; j < B.length(); j++)
+        for(int j = 1; j < B.length(); j++)
         {
-            if(i == j)
+            if(A.at(i) == B.at(j))
             {
-                int value = alphabet[j];
+                M[i][j] = alphabet[A[i-1]] + M[i-1][j-1];
             }
 
-            M[i][j] = std::max(value + M[i - 1][j - 1], M[i][j-1]); //ADD M[i-1][j] INTO CONSIDERATION FOR MAX
-            maxValue = M[i][j];
+            M[i][j] = std::max(M[i][j-1], M[i-1][j]); //ADD M[i-1][j] INTO CONSIDERATION FOR MAX
+            
+            if(M[i][j] > maxValue)
+            {
+                maxValue = M[i][j];
+            }
         }
     }
     
     return maxValue;
+}
+
+std::string getCommonSubsequence()
+{
+    
 }
 
 void genOutput(){
