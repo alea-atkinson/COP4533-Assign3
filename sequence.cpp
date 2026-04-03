@@ -1,30 +1,37 @@
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <map>
-#include <sstream>
-#include <algorithm>
 #include "sequence.h"
 
 
-int main(){
-    std::map<char, int>  alphabet;
-    std::vector<std::string> strings= readInput(alphabet);
-    std::cout<< "string a: "<< strings[0] <<std::endl;
-    std::cout<< "string b: "<< strings[1] <<std::endl;
-    for (const auto& [letter, value] : alphabet) {
-        std::cout << letter << ": " << value << "\n";
+int main(int argc, char* argv[]){
+    //check for incorrect arguments
+    if(argc<4){
+        std::cout<<"Not enough arguments."<<std::endl;
+        return -1;
     }
+    else if(std::stoi(argv[1])>26){
+        std::cout<<"K cannot be greater than 26."<<std::endl;
+    }
+    else if(std::stoi(argv[2])<1 || std::stoi(argv[3])<1){
+        std::cout<<"n and m must be greater than 0."<<std::endl;
+    }
+    //generate input file
+    genInput(std::stoi(argv[1]), std::stoi(argv[2]), std::stoi(argv[3]), "io/input.txt");
+    //initialize data structures
+    std::map<char, int>  alphabet;
+    std::vector<std::string> strings= readInput(alphabet, "io/input.txt");
     std::vector<std::vector<int>> M;
-    std::cout<< getMaxSequenceValue(strings[0], strings[1], M, alphabet) << std::endl;
-    std::cout<< getCommonSubsequence(strings[0], strings[1], M, strings[0].length(), strings[1].length());
-    genOutput(getMaxSequenceValue(strings[0], strings[1], M, alphabet), getCommonSubsequence(strings[0], strings[1], M, strings[0].length(), strings[1].length()));
+    //get values
+    int max=getMaxSequenceValue(strings[0], strings[1], M, alphabet);
+    std::string sequence= getCommonSubsequence(strings[0], strings[1], M, strings[0].length(), strings[1].length());
+    //format output
+    genOutput(max, sequence);
     return 0;
+
+    
 }
 
-void genInput(int K, int n, int m){
+void genInput(int K, int n, int m, std::string file){
     //K MUST BE LESS THAN OR EQUAL TO 26
-    std::ofstream input("io/input.txt");
+    std::ofstream input(file);
    
     input << K << std::endl; //write K
    
@@ -50,9 +57,9 @@ void genInput(int K, int n, int m){
     input.close();
 }
 
-std::vector<std::string> readInput(std::map<char, int>&  alphabet){
+std::vector<std::string> readInput(std::map<char, int>&  alphabet, std::string file){
 
-    std::ifstream input("io/input.txt");
+    std::ifstream input(file);
     std::string line;
     std::vector<std::string> strings;
     int count=0;
@@ -138,6 +145,29 @@ std::string getCommonSubsequence(std::string A, std::string B, std::vector<std::
 void genOutput(int max, std::string subsequence){
      std::ofstream output("io/output.txt");
      output << max << std::endl << subsequence;
-    //  std::cout << max << std::endl << subsequence;
+     std::cout << max << std::endl << subsequence;
+     output.close();
 }
 
+void runtime(){
+
+    std::map<char, int>  alphabet;
+    std::vector<std::vector<int>> M;
+    for(int i=0; i<10; i++){
+        genInput(26, 25+(i*10), 25+(i*10), "written/io/input_"+ std::to_string(i+1) +".txt");
+        std::vector<std::string> strings= readInput(alphabet, "written/io/input_"+ std::to_string(i+1) +".txt");
+        auto start = std::chrono::steady_clock::now();
+        int max=getMaxSequenceValue(strings[0], strings[1], M, alphabet);
+        std::string sequence= getCommonSubsequence(strings[0], strings[1], M, strings[0].length(), strings[1].length());
+        auto end = std::chrono::steady_clock::now();
+        auto diff = end - start;
+        std::cout<< i << ": "<< (std::chrono::duration_cast<std::chrono::microseconds>(diff)).count()<<std::endl;
+        //format output
+        std::ofstream output("written/io/output_"+ std::to_string(i+1) +".txt");
+        output << max << std::endl << sequence;
+        output.close();
+        alphabet.clear();
+        M.clear();
+    }
+    
+}
