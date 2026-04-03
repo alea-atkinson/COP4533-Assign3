@@ -16,8 +16,9 @@ int main(){
         std::cout << letter << ": " << value << "\n";
     }
     std::vector<std::vector<int>> M;
-    std::cout<< getMaxSequenceValue(strings[0], strings[1], M, alphabet);   
-    //genOutput(getMaxSequenceValue(strings[0], strings[1], M, alphabet), getCommonSubsequence(strings[0], strings[1], M, strings[0].length(), strings[1].length()));
+    std::cout<< getMaxSequenceValue(strings[0], strings[1], M, alphabet) << std::endl;
+    std::cout<< getCommonSubsequence(strings[0], strings[1], M, strings[0].length(), strings[1].length());
+    genOutput(getMaxSequenceValue(strings[0], strings[1], M, alphabet), getCommonSubsequence(strings[0], strings[1], M, strings[0].length(), strings[1].length()));
     return 0;
 }
 
@@ -120,7 +121,7 @@ std::string getCommonSubsequence(std::string A, std::string B, std::vector<std::
     {
         return "";
     }
-    else if(A.at(i) == B.at(j))
+    else if(A.at(i - 1) == B.at(j - 1))
     {
         return getCommonSubsequence(A, B, M, i - 1, j - 1) + A[i - 1];
     }
@@ -137,6 +138,6 @@ std::string getCommonSubsequence(std::string A, std::string B, std::vector<std::
 void genOutput(int max, std::string subsequence){
      std::ofstream output("io/output.txt");
      output << max << std::endl << subsequence;
-     std::cout << max << std::endl << subsequence;
+    //  std::cout << max << std::endl << subsequence;
 }
 
